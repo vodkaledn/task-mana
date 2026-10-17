@@ -176,7 +176,11 @@
   /* projects */
   .proj{border:1px solid var(--line); border-radius:9px; padding:12px; margin-bottom:10px; background:var(--panel-2)}
   .proj:last-child{margin-bottom:0}
-  .proj .ph{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px}
+  .proj .ph{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+  .proj .pn{flex:1 1 auto; min-width:0}
+  .proj .ph .count{margin-left:auto; flex:0 0 auto; text-align:right; white-space:nowrap}
+  .proj .ph .x{flex:0 0 22px; width:22px; text-align:center}
+  .proj .ph .xspacer{flex:0 0 22px}
   .proj .pn{font-weight:600; letter-spacing:.02em; display:flex; align-items:center}
   .proj.dragging{opacity:.5; border-style:dashed}
   .proj.grabbable{cursor:grab}
@@ -941,7 +945,12 @@
           el.draggable = !e.target.closest(".task, button, input, select, a, .swatches, .dot");
         });
       }
-      ph.appendChild(nm); ph.appendChild(ct); el.appendChild(ph);
+      ph.appendChild(nm); ph.appendChild(ct);
+      if(g.loose){
+        var spacer = document.createElement("span"); spacer.className = "xspacer";
+        ph.appendChild(spacer);
+      }
+      el.appendChild(ph);
 
       var bar = document.createElement("div"); bar.className = "bar";
       bar.innerHTML = '<i style="width:' + pct + '%"></i>';
@@ -981,7 +990,6 @@
       if(!g.loose){
         var del = document.createElement("button");
         del.className = "x"; del.textContent = "×"; del.title = "Remove project from the list";
-        del.style.cssText = "position:relative; float:right; margin-top:-6px";
         del.addEventListener("click", function(){
           if(g.tasks.length){ alert("Delete or move this project's tasks first."); return; }
           state.projects.forEach(function(p){ if(p.name === g.name){ p.deleted = true; touch(p); } });
