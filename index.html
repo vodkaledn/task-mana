@@ -45,7 +45,7 @@
   .hint{color:var(--muted); font-size:12px}
 
   /* vertical form */
-  .form{display:grid; grid-template-columns:repeat(2,minmax(260px,1fr)); gap:14px 20px; max-width:860px}
+  .form{display:grid; grid-template-columns:repeat(2,minmax(240px,1fr)); gap:14px 20px; max-width:860px}
   .form .wide{grid-column:1 / -1}
   .field{display:flex; flex-direction:column; gap:6px}
   .field > label{font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted)}
@@ -70,7 +70,7 @@
   }
   .wheel button:hover{background:var(--panel-3); color:var(--text)}
   .wheel button.on{background:#fff; color:#000; font-weight:700}
-  .wheelfoot{display:flex; justify-content:space-between; gap:8px; margin-top:10px}
+  .wheelfoot{display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; margin-top:10px}
   .wheelfoot button{flex:1}
   #timeDone{background:#fff; color:#000; border-color:#fff; font-weight:600}
   .pop{
@@ -221,12 +221,15 @@
   .modal.hidden{display:none}
   .sheet{
     background:var(--panel); border:1px solid var(--line-2); border-radius:12px;
-    padding:20px; max-width:520px; width:100%;
+    padding:20px; max-width:580px; width:100%;
   }
   .sheet h2{margin-top:0}
-  .editform{max-width:none; gap:12px 18px}
-  .editform .seg{flex-wrap:wrap}
-  .editform .seg button{padding:8px 10px; font-size:13px}
+  .editform{max-width:none; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px}
+  .editform .field{min-width:0}
+  .editform .seg{display:flex; width:100%; flex-wrap:wrap}
+  .editform .seg button{flex:1 1 auto; padding:8px 6px; font-size:12.5px; white-space:nowrap}
+  .editform .pickwrap,.editform .datebtn,.editform .timebtn{width:100%}
+  .editform .pop{max-width:100%}
   #etDelete,#epDelete{color:#ff5c5c; border-color:#5a2a2a}
   #etDelete:hover,#epDelete:hover{border-color:#ff5c5c; background:rgba(255,92,92,.1)}
   .task .body{cursor:pointer}
@@ -234,6 +237,7 @@
   .proj .pn{cursor:pointer}
   .sheet p{margin:0 0 12px}
   .sheet .field{margin-bottom:12px}
+  .sheet input,.sheet select{max-width:100%}
   .steps{padding-left:18px; margin:0 0 14px}
   .steps li{margin-bottom:5px}
   .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--text)}
@@ -241,6 +245,10 @@
   .checkrow input{width:15px; height:15px; accent-color:#fff}
   #syncStatus{max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 
+  @media (max-width:620px){
+    .editform{grid-template-columns:1fr}
+    .sheet{padding:16px}
+  }
   @media (max-width:860px){
     .form{grid-template-columns:1fr}
     .days{grid-template-columns:1fr}
