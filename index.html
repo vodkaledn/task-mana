@@ -364,7 +364,9 @@
     </p>
     <ol class="hint steps">
       <li>Open <span class="mono">github.com/settings/tokens</span> → <em>Tokens (classic)</em> → <em>Generate new token (classic)</em>.</li>
-      <li>Tick only the <span class="mono">gist</span> scope. Give it a long expiry. Generate and copy it.</li>
+      <li>Tick only the <span class="mono">gist</span> scope. Give it a long expiry. Generate and copy it.
+          It must be a <strong>classic</strong> token starting <span class="mono">ghp_</span> &mdash;
+          fine-grained tokens cannot use gists.</li>
       <li>Paste it below and press <em>Save &amp; sync</em>. On your second device, paste the same token
           <strong>and</strong> the Gist ID shown here afterwards.</li>
     </ol>
@@ -1652,13 +1654,38 @@
     opts = opts || {};
     opts.headers = Object.assign({
       "Authorization": "Bearer " + cfg.token,
-      "Accept": "application/vnd.github+json"
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
     }, opts.headers || {});
     return fetch("https://api.github.com" + path, opts).then(function(r){
-      if(r.status === 401) throw new Error("Token rejected — check it has the gist scope.");
-      if(r.status === 404) throw new Error("Gist not found for this token.");
-      if(!r.ok) throw new Error("GitHub error " + r.status);
-      return r.json();
+      if(r.ok) return r.json();
+      // GitHub explains itself in the body; show that rather than a bare code
+      return r.text().then(function(body){
+        var detail = "";
+        try{
+          var j = JSON.parse(body);
+          detail = j.message || "";
+          if(j.documentation_url && /scope/i.test(detail)) detail += "";
+        }catch(e){ detail = (body || "").slice(0, 160); }
+
+        var scopes = r.headers.get("x-oauth-scopes");
+        var extra = "";
+        if(r.status === 401) extra = " The token is mistyped, revoked or expired.";
+        if(r.status === 403){
+          if(cfg.token.indexOf("github_pat_") === 0){
+            extra = " This is a fine-grained token; the Gist API only accepts classic tokens (ghp_...).";
+          } else if(scopes !== null && scopes.indexOf("gist") === -1){
+            extra = " This token carries the scopes [" + (scopes || "none") +
+                    "] — it needs gist, and scopes cannot be added to an existing token.";
+          } else if(/rate limit/i.test(detail)){
+            extra = " Wait for the limit to reset, then sync again.";
+          }
+        }
+        if(r.status === 404 && path.indexOf("/gists/") === 0){
+          extra = " Check the Gist ID, or clear it to start a new gist.";
+        }
+        throw new Error("GitHub " + r.status + (detail ? ": " + detail : "") + extra);
+      });
     });
   }
 
