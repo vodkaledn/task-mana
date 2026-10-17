@@ -175,7 +175,9 @@
   .proj{border:1px solid var(--line); border-radius:9px; padding:12px; margin-bottom:10px; background:var(--panel-2)}
   .proj:last-child{margin-bottom:0}
   .proj .ph{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px}
-  .proj .pn{font-weight:600; letter-spacing:.02em}
+  .proj .pn{font-weight:600; letter-spacing:.02em; display:flex; align-items:center}
+  .proj.dragging{opacity:.5; border-style:dashed}
+  .pgrip{padding:0 8px 0 0; font-size:16px}
   .bar{height:3px; background:var(--panel-3); border-radius:2px; overflow:hidden; margin-bottom:10px}
   .bar i{display:block; height:100%; background:#fff}
 
@@ -864,7 +866,15 @@
         state.projects.push(touch({name:t.project, color:nextColor()}));
       }
     });
-    names.sort();
+    names.sort(function(a,b){
+      var pa = projRec(a), pb = projRec(b);
+      var oa = pa && pa.order != null ? pa.order : null;
+      var ob = pb && pb.order != null ? pb.order : null;
+      if(oa != null && ob != null && oa !== ob) return oa - ob;
+      if(oa != null && ob == null) return -1;
+      if(ob != null && oa == null) return 1;
+      return a.localeCompare(b);
+    });
     var groups = names.map(function(n){ return {name:n, tasks:[]}; });
     var none = {name:"No project", tasks:[], loose:true};
     liveTasks().forEach(function(t){
@@ -881,6 +891,8 @@
 
     groups.forEach(function(g){
       var el = document.createElement("div"); el.className = "proj";
+      el.dataset.name = g.loose ? "" : g.name;
+      el.dataset.loose = g.loose ? "1" : "0";
       var oneoffs = g.tasks.filter(function(t){ return t.repeat !== "weekly"; });
       var doneN = oneoffs.filter(function(t){ return !!t.done; }).length;
       var pct = oneoffs.length ? Math.round(doneN/oneoffs.length*100) : 0;
@@ -897,6 +909,14 @@
       var ct = document.createElement("div"); ct.className = "count";
       ct.textContent = g.tasks.length + " task" + (g.tasks.length === 1 ? "" : "s") +
                        (oneoffs.length ? " · " + doneN + "/" + oneoffs.length + " done" : "");
+      if(!g.loose){
+        var pgrip = document.createElement("span");
+        pgrip.className = "grip pgrip"; pgrip.textContent = "≡";
+        pgrip.title = "Drag to reorder this project";
+        pgrip.addEventListener("mousedown", function(){ el.draggable = true; });
+        pgrip.addEventListener("mouseup", function(){ el.draggable = false; });
+        nm.insertBefore(pgrip, nm.firstChild);
+      }
       ph.appendChild(nm); ph.appendChild(ct); el.appendChild(ph);
 
       var bar = document.createElement("div"); bar.className = "bar";
@@ -947,6 +967,49 @@
       }
       box.appendChild(el);
     });
+    wireProjDrag(box);
+  }
+  function projRec(name){
+    return liveProjects().filter(function(p){ return p.name === name; })[0];
+  }
+  function wireProjDrag(list){
+    var dragging = null;
+    list.addEventListener("dragstart", function(e){
+      var card = e.target.closest(".proj");
+      if(!card || e.target.closest(".task")) return;
+      dragging = card; card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      try{ e.dataTransfer.setData("text/plain", card.dataset.name || ""); }catch(err){}
+    });
+    list.addEventListener("dragend", function(e){
+      if(!dragging) return;
+      dragging.classList.remove("dragging");
+      dragging.draggable = false;
+      dragging = null;
+      commitProjOrder(list);
+    });
+    list.addEventListener("dragover", function(e){
+      if(!dragging) return;
+      e.preventDefault();
+      var after = null;
+      Array.prototype.forEach.call(list.querySelectorAll(".proj:not(.dragging)"), function(card){
+        if(card.dataset.loose === "1") return;          // "No project" stays at the bottom
+        var box = card.getBoundingClientRect();
+        if(e.clientY > box.top + box.height/2) after = card;
+      });
+      if(after === null) list.insertBefore(dragging, list.firstChild);
+      else after.parentNode.insertBefore(dragging, after.nextSibling);
+    });
+  }
+  function commitProjOrder(list){
+    var names = Array.prototype.map.call(list.querySelectorAll(".proj"), function(c){ return c.dataset.name; })
+                 .filter(function(n){ return !!n; });
+    var changed = false;
+    names.forEach(function(n, i){
+      var p = projRec(n);
+      if(p && p.order !== i){ p.order = i; touch(p); changed = true; }
+    });
+    if(changed){ save(); render(); }
   }
   function projOrder(a,b){
     var ao = a.order, bo = b.order;
@@ -960,6 +1023,7 @@
     var dragging = null;
     holder.addEventListener("dragstart", function(e){
       var row = e.target.closest(".task"); if(!row) return;
+      e.stopPropagation();
       dragging = row; row.classList.add("dragging");
       e.dataTransfer.effectAllowed = "move";
       try{ e.dataTransfer.setData("text/plain", row.dataset.id); }catch(err){}
