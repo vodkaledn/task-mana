@@ -126,6 +126,17 @@
   .urg.u1{color:#9a9a9a}
   .swatches{display:flex; flex-wrap:wrap; gap:6px}
   .swatches[hidden]{display:none}
+  .emojis{display:flex; flex-wrap:wrap; gap:4px}
+  .emojis[hidden]{display:none}
+  .emojis button{
+    width:28px; height:28px; padding:0; font-size:15px; line-height:1;
+    border-radius:6px; border:1px solid transparent; background:var(--panel-2);
+  }
+  .emojis button:hover{border-color:var(--line-2)}
+  .emojis button.on{border-color:#fff; background:var(--panel-3)}
+  .emojis button.none{font-size:10px; color:var(--muted)}
+  .pemoji{margin-right:7px; font-size:14px; line-height:1}
+  .tag .pemoji{margin-right:4px; font-size:12px}
   .swatches button{
     width:22px; height:22px; padding:0; border-radius:50%; border:2px solid transparent;
   }
@@ -282,6 +293,7 @@
         <select id="addProject"></select>
         <input type="text" id="newProject" placeholder="New project name" hidden>
         <div class="swatches" id="newColor" hidden></div>
+        <div class="emojis" id="newEmoji" hidden></div>
       </div>
 
       <div class="field">
@@ -516,7 +528,37 @@
   }
   function nextColor(){ return PALETTE[liveProjects().length % PALETTE.length]; }
 
-  var pickedColor = nextColor();
+  var EMOJI = ["\u{1F4E3}","\u{1F3AF}","\u{1F680}","\u{1F4A1}","\u{1F4CA}","\u{1F3AC}",
+               "\u{1F6CD}","\u{1F4DD}","\u{1F91D}","\u{1F4B0}","\u{1F4C5}","\u{1F9EA}",
+               "\u{1F310}","\u{2699}","\u{1F525}","\u{2B50}"];
+  function projEmoji(name){
+    var p = projRec(name);
+    return (p && p.emoji) || "";
+  }
+  // a row of emoji buttons; returns the function that re-marks the active one
+  function buildEmojiRow(host, get, set){
+    host.innerHTML = "";
+    function mark(){
+      var cur = get();
+      Array.prototype.forEach.call(host.children, function(b){
+        b.classList.toggle("on", (b.dataset.ch || "") === cur);
+      });
+    }
+    var none = document.createElement("button");
+    none.type = "button"; none.className = "none"; none.textContent = "none"; none.title = "No emoji";
+    none.addEventListener("click", function(){ set(""); mark(); });
+    host.appendChild(none);
+    EMOJI.forEach(function(ch){
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = ch; b.dataset.ch = ch;
+      b.addEventListener("click", function(){ set(ch); mark(); });
+      host.appendChild(b);
+    });
+    mark();
+    return mark;
+  }
+
+  var pickedColor = nextColor(), pickedEmoji = "";
   PALETTE.forEach(function(c){
     var b = document.createElement("button");
     b.type = "button"; b.style.background = c; b.title = c;
@@ -545,8 +587,12 @@
     var isNew = addProject.value === "__new";
     newProject.hidden = isNew ? false : true;
     newColor.hidden = newProject.hidden;
-    if(isNew){ pickedColor = nextColor(); syncSwatches(); }
+    $("newEmoji").hidden = newProject.hidden;
+    if(isNew){ pickedColor = nextColor(); pickedEmoji = ""; syncSwatches(); markNewEmoji(); }
   }
+  var markNewEmoji = buildEmojiRow($("newEmoji"),
+    function(){ return pickedEmoji; },
+    function(v){ pickedEmoji = v; });
   addProject.addEventListener("change", function(){
     toggleNew();
     if(!newProject.hidden){ newProject.value = ""; newProject.focus(); }
@@ -686,7 +732,7 @@
       proj = newProject.value.trim();
       if(!proj){ newProject.focus(); return; }
       if(projNames().indexOf(proj) === -1){
-        state.projects.push(touch({name:proj, color:pickedColor}));
+        state.projects.push(touch({name:proj, color:pickedColor, emoji:pickedEmoji}));
         state.projects.sort(function(a,b){ return a.name.localeCompare(b.name); });
       }
     }
@@ -716,9 +762,16 @@
   }
   function projTag(name){
     var s = document.createElement("span"); s.className = "tag";
-    var d = document.createElement("span");
-    d.className = "dot"; d.style.background = projColor(name);
-    s.appendChild(d); s.appendChild(document.createTextNode(name));
+    var em = projEmoji(name);
+    if(em){
+      var e = document.createElement("span"); e.className = "pemoji"; e.textContent = em;
+      s.appendChild(e);
+    } else {
+      var d = document.createElement("span");
+      d.className = "dot"; d.style.background = projColor(name);
+      s.appendChild(d);
+    }
+    s.appendChild(document.createTextNode(name));
     s.style.borderColor = projColor(name);
     return s;
   }
@@ -861,7 +914,9 @@
           txt.appendChild(ttl);
           if(t.project){
             var p = document.createElement("span"); p.className = "p";
-            p.textContent = t.project; p.style.color = projColor(t.project);
+            var pe = projEmoji(t.project);
+            p.textContent = (pe ? pe + " " : "") + t.project;
+            p.style.color = projColor(t.project);
             txt.appendChild(p);
           }
           m.appendChild(cb);
@@ -929,6 +984,12 @@
         dotEl = document.createElement("span");
         dotEl.className = "dot big"; dotEl.style.background = projColor(g.name);
         nm.appendChild(dotEl);
+        var em = projEmoji(g.name);
+        if(em){
+          var emEl = document.createElement("span");
+          emEl.className = "pemoji"; emEl.textContent = em;
+          nm.appendChild(emEl);
+        }
       }
       nm.appendChild(document.createTextNode(g.name));
       var ct = document.createElement("div"); ct.className = "count";
@@ -961,9 +1022,21 @@
         var sw = document.createElement("div");
         sw.className = "swatches"; sw.style.margin = "0 0 10px";
         sw.hidden = true;
-        dotEl.title = "Change colour";
+        var emRow = document.createElement("div");
+        emRow.className = "emojis"; emRow.style.margin = "0 0 10px";
+        emRow.hidden = true;
+        buildEmojiRow(emRow,
+          (function(nm3){ return function(){ return projEmoji(nm3); }; })(g.name),
+          (function(nm3){ return function(v){
+            state.projects.forEach(function(p){ if(p.name === nm3){ p.emoji = v; touch(p); } });
+            save(); render();
+          }; })(g.name));
+        dotEl.title = "Change colour and emoji";
         dotEl.style.cursor = "pointer";
-        dotEl.addEventListener("click", function(){ sw.hidden = !sw.hidden; });
+        dotEl.addEventListener("click", function(){
+          sw.hidden = !sw.hidden; emRow.hidden = sw.hidden;
+        });
+        el.appendChild(emRow);
         PALETTE.forEach(function(c){
           var b = document.createElement("button");
           b.type = "button"; b.style.background = c; b.title = "Set colour " + c;
