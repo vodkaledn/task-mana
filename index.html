@@ -519,8 +519,11 @@
       return s;
     }catch(e){ return {tasks:[], projects:[]}; }
   }
-  function save(){
+  function saveQuiet(){
     try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function save(){
+    saveQuiet();
     autoSync();
   }
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -1713,6 +1716,9 @@
     return JSON.stringify(state) !== before;
   }
 
+  var lastPushed = null;      // what the gist already holds, so we do not re-send it
+  function payload(){ return JSON.stringify(state, null, 1); }
+
   function sync(silent){
     if(syncing) return Promise.resolve();
     if(!cfg.token){
@@ -1721,6 +1727,7 @@
       return Promise.resolve();
     }
     syncing = true;
+    clearTimeout(autoTimer); autoTimer = null;
     status("Syncing…");
     note("Syncing…");
 
@@ -1735,15 +1742,17 @@
 
     return pull.then(function(remote){
       mergeState(remote);
-      save();
+      saveQuiet();                       // never let our own save schedule another sync
       var body = JSON.stringify({
         description: "Task Deck data — synced across devices",
-        files: (function(o){ o[FILE] = {content: JSON.stringify(state, null, 1)}; return o; })({})
+        files: (function(o){ o[FILE] = {content: payload()}; return o; })({})
       });
+      if(cfg.gist && payload() === lastPushed) return null;   // nothing new to send
       if(cfg.gist) return api("/gists/" + cfg.gist, {method:"PATCH", body:body});
       return api("/gists", {method:"POST", body:'{"public":false,' + body.slice(1)});
     }).then(function(g){
       if(g && g.id) cfg.gist = g.id;
+      lastPushed = payload();
       cfg.last = Date.now(); saveCfg();
       $("gistInput").value = cfg.gist;
       render();
@@ -1756,11 +1765,15 @@
     }).then(function(){ syncing = false; });
   }
 
-  var autoTimer = null;
+  // auto-sync: at most once a minute, and never as a reaction to sync's own save
+  var autoTimer = null, MIN_GAP = 60000;
   function autoSync(){
-    if(!cfg.auto || !cfg.token) return;
-    clearTimeout(autoTimer);
-    autoTimer = setTimeout(function(){ sync(true); }, 2500);
+    if(!cfg.auto || !cfg.token || syncing || autoTimer) return;
+    var wait = Math.max(5000, MIN_GAP - (Date.now() - (cfg.last || 0)));
+    autoTimer = setTimeout(function(){
+      autoTimer = null;
+      sync(true);
+    }, wait);
   }
 
   function openSync(){

@@ -35,8 +35,9 @@ Setup, once per device:
    The first device creates the Gist and shows its **Gist ID**.
 4. On the second device, paste the same token **and** that Gist ID, then **Save & sync**.
 
-Tick **Sync automatically** and each device syncs when you open the app and a couple of seconds after any change.
-Otherwise press **Sync** when you want to push and pull.
+Tick **Sync automatically** and each device syncs when you open the app and shortly after a change,
+at most once a minute; a sync with nothing new to send only reads. That keeps a device to roughly 120
+calls an hour against GitHub's limit of 5,000. Otherwise press **Sync** when you want to push and pull.
 
 **How conflicts resolve:** the merge is per task, not whole-file. Every task and project carries a timestamp,
 and the newer edit wins for that item alone — so ticking something off on the laptop and adding a task on the
