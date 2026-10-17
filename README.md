@@ -6,7 +6,7 @@ A single-file task manager for people juggling many projects. No build step, no 
 
 - **Compact task form** — task + project, date + time, urgency + repeat, paired two to a row.
 - **Projects with colours** — assign each task to a project (or create one inline) and give the project a colour from an 8-swatch palette. The colour shows as a stripe and dot on every task, in the week calendar, and on the project's progress bar; click a project's dot to reveal the palette and recolour it.
-- **Project emoji** — give a project an emoji from a 16-icon row (or none). It replaces the colour dot on task tags and sits beside the project name in the calendar and the Projects list. Pick it when creating the project, or change it later behind the same dot.
+- **Project emoji** — every emoji in Unicode 15.1 (1,898 of them, flags and people included), searchable by name: type `rocket`, `chart`, `vietnam`, `party popper`. Recently used ones come back first. The emoji replaces the colour dot on task tags and leads the project name in the calendar and the Projects list.
 - **Drag to reorder a day** — drag tasks in Today, in Tomorrow, or straight inside a calendar day cell. A day has one running order, so moving a task in Today moves it in the calendar too, and vice versa.
 - **Drag to reorder** — drag tasks by the ≡ grip to reorder them inside a project, and drag a project card from anywhere on it — its name, its header, its empty space — to reorder the projects themselves. Both orders are saved. "No project" always sits last.
 - **Urgency symbols** — mark a task `!` low, `!!` medium or `!!!` high. The symbol appears on the task everywhere, colour-coded grey / amber / red, and more urgent tasks sort first within the same time slot.
@@ -15,6 +15,7 @@ A single-file task manager for people juggling many projects. No build step, no 
 - **Recurring tasks** — a *Weekly* repeat option for standing meetings, plus a list of all standing commitments.
 - **Today + Tomorrow** — today's tasks sit above the calendar, with a toggle that opens tomorrow's list side by side.
 - **Three-state tasks** — the box beside each task cycles on click: pale red (not started) → amber `~` (in progress) → green `✓` (done).
+- **Edit by clicking** — click a task (in Today, Tomorrow, the calendar or a project) to open a dialog for its title, project, status, date, time, urgency and repeat, with Delete there too. Click a project's name to rename it, recolour it, change its emoji, or delete it and its tasks. Renaming a project moves all of its tasks with it. Escape closes either dialog.
 - **Week calendar** — Monday to Sunday (weekend at the end), each day listing its tasks with a done/total counter. Each entry puts its urgency and time on one line and the task itself on the next, so narrow days stay readable. Toggle **1 / 2 / 4 weeks** and page back and forth.
 - **Black & white** interface throughout.
 - **Export / Import** JSON for backup or moving between browsers.
