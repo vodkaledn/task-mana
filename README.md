@@ -4,14 +4,16 @@ A single-file task manager for people juggling many projects. No build step, no 
 
 ## Features
 
-- **Vertical task form** — task, project, date, time and repeat stacked one per row.
-- **Projects with colours** — assign each task to a project (or create one inline) and give the project a colour from an 8-swatch palette. The colour shows as a stripe and dot on every task, in the week calendar, and on the project's progress bar; you can recolour a project any time from the Projects section.
+- **Compact task form** — task + project, date + time, urgency + repeat, paired two to a row.
+- **Projects with colours** — assign each task to a project (or create one inline) and give the project a colour from an 8-swatch palette. The colour shows as a stripe and dot on every task, in the week calendar, and on the project's progress bar; click a project's dot to reveal the palette and recolour it.
+- **Drag to reorder** — inside a project, drag tasks by the ≡ grip into whatever order you want to work them; the order is saved.
 - **Urgency symbols** — mark a task `!` low, `!!` medium or `!!!` high. The symbol appears on the task everywhere, colour-coded grey / amber / red, and more urgent tasks sort first within the same time slot.
 - **Any date** — a built-in Monday→Sunday month picker (no locale-dependent native popup).
-- **24-hour time** — one field that opens a two-column wheel: hours `00`–`23` on the left, minutes in 5-minute steps on the right, both scrollable, with **No time** and **Done** below. Never AM/PM, whatever your browser's locale.
+- **24-hour time** — one field that opens a two-column wheel: hours `00`–`23` on the left, minutes `00`–`59` on the right, both scrollable, with **No time** and **Done** below. Never AM/PM, whatever your browser's locale.
 - **Recurring tasks** — a *Weekly* repeat option for standing meetings, plus a list of all standing commitments.
 - **Today + Tomorrow** — today's tasks sit above the calendar, with a toggle that opens tomorrow's list side by side.
-- **Week calendar** — Monday to Sunday (weekend at the end), each day listing its tasks with a done/total counter. Toggle **1 / 2 / 4 weeks** and page back and forth.
+- **Three-state tasks** — the box beside each task cycles on click: pale red (not started) → amber `~` (in progress) → green `✓` (done).
+- **Week calendar** — Monday to Sunday (weekend at the end), each day listing its tasks with a done/total counter. Each entry puts its urgency and time on one line and the task itself on the next, so narrow days stay readable. Toggle **1 / 2 / 4 weeks** and page back and forth.
 - **Black & white** interface throughout.
 - **Export / Import** JSON for backup or moving between browsers.
 - **Multi-device sync** through a secret GitHub Gist — see below.

@@ -17,12 +17,12 @@
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   header{
-    padding:22px 20px 16px; border-bottom:1px solid var(--line);
+    padding:22px 24px 16px; border-bottom:1px solid var(--line);
     display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between;
   }
   h1{margin:0; font-size:20px; letter-spacing:.14em; text-transform:uppercase}
   .sub{color:var(--muted); font-size:13px; margin-top:2px}
-  main{max-width:1100px; margin:0 auto; padding:20px 16px 70px}
+  main{max-width:1680px; margin:0 auto; padding:20px 24px 70px}
   section{
     background:var(--panel); border:1px solid var(--line);
     border-radius:var(--radius); padding:16px; margin-bottom:18px;
@@ -45,7 +45,8 @@
   .hint{color:var(--muted); font-size:12px}
 
   /* vertical form */
-  .form{display:flex; flex-direction:column; gap:14px; max-width:460px}
+  .form{display:grid; grid-template-columns:repeat(2,minmax(260px,1fr)); gap:14px 20px; max-width:860px}
+  .form .wide{grid-column:1 / -1}
   .field{display:flex; flex-direction:column; gap:6px}
   .field > label{font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted)}
   .field input[type=text], .field select{width:100%}
@@ -97,7 +98,17 @@
     background:var(--panel-2); margin-bottom:6px;
   }
   .task:last-child{margin-bottom:0}
-  .task input[type=checkbox]{margin-top:4px; width:16px; height:16px; accent-color:#fff}
+  .st{
+    flex:0 0 20px; width:20px; height:20px; margin-top:2px; padding:0; border-radius:5px;
+    font-size:13px; font-weight:700; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  .st.s0{background:rgba(255,92,92,.12); border:1px solid #a84a4a; color:transparent}
+  .st.s0:hover{background:rgba(255,92,92,.22); border-color:#ff5c5c}
+  .st.s1{background:rgba(255,176,32,.16); border:1px solid #ffb020; color:#ffb020}
+  .st.s1:hover{background:rgba(255,176,32,.28)}
+  .st.s2{background:rgba(90,214,125,.18); border:1px solid #5ad67d; color:#5ad67d}
+  .st.s2:hover{background:rgba(90,214,125,.3)}
+  .mini .st{flex:0 0 17px; width:17px; height:17px; margin-top:0; font-size:11px; border-radius:4px}
   .task .body{flex:1; min-width:0}
   .task .title{word-break:break-word}
   .task.done .title{text-decoration:line-through; color:var(--muted)}
@@ -121,6 +132,12 @@
   .swatches button:hover{border-color:var(--line-2); background:none}
   .swatches button.on{border-color:#fff}
   .stripe{width:3px; border-radius:2px; flex:0 0 3px; align-self:stretch}
+  .dot.big{width:11px; height:11px; flex:0 0 11px; margin-right:9px}
+  .task.draggable{cursor:grab}
+  .task.dragging{opacity:.45; border-style:dashed}
+  .grip{color:var(--dim); font-size:15px; padding:0 2px 0 6px; cursor:grab; user-select:none}
+  .grip:hover{color:var(--text)}
+  .droplist{min-height:4px}
   .x{background:transparent; border:0; color:var(--dim); padding:2px 6px; font-size:16px; line-height:1}
   .x:hover{color:#fff; background:transparent}
   .empty{color:var(--dim); font-size:13px; padding:6px 2px}
@@ -133,23 +150,25 @@
 
   /* calendar */
   .weekhead{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px}
-  .days{display:grid; grid-template-columns:repeat(7,1fr); gap:8px}
+  .days{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px}
   .weekrow{
     grid-column:1 / -1; font-size:10px; text-transform:uppercase; letter-spacing:.12em;
     color:var(--muted); border-top:1px solid var(--line); padding-top:10px; margin-top:4px;
   }
   .weekrow:first-child{border-top:0; padding-top:0; margin-top:0}
-  .day{background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:9px; min-height:132px}
+  .day{background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:11px; min-height:160px}
   .day.today{border-color:#fff}
   .day .dh{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px}
   .day .dow{font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted)}
   .day .dnum{font-size:17px; font-weight:600}
-  .mini{font-size:12.5px; display:flex; gap:6px; align-items:flex-start; padding:4px 0; border-top:1px solid var(--line)}
+  .mini{font-size:13px; display:flex; gap:7px; align-items:flex-start; padding:7px 0; border-top:1px solid var(--line)}
   .mini:first-of-type{border-top:0}
-  .mini input{width:14px; height:14px; margin-top:3px; accent-color:#fff}
-  .mini.done .t{text-decoration:line-through; color:var(--muted)}
-  .mini .t{flex:1; word-break:break-word}
-  .mini .p{display:block; font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.06em}
+  .mini.done .ttl{text-decoration:line-through; color:var(--muted)}
+  .mini .t{flex:1; min-width:0}
+  .mini .line1{display:flex; gap:6px; align-items:center; margin-bottom:2px}
+  .mini .tm{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:11px; color:var(--muted)}
+  .mini .ttl{display:block; word-break:break-word; line-height:1.35}
+  .mini .p{display:block; font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.06em; margin-top:2px}
   .count{font-size:10px; color:var(--muted)}
 
   /* projects */
@@ -181,6 +200,7 @@
   #syncStatus{max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 
   @media (max-width:860px){
+    .form{grid-template-columns:1fr}
     .days{grid-template-columns:1fr}
     .day{min-height:0}
     .duo{grid-template-columns:1fr}
@@ -253,16 +273,6 @@
       </div>
 
       <div class="field">
-        <label>Urgency</label>
-        <div class="seg" id="addUrgency">
-          <button type="button" data-urg="0" class="on">None</button>
-          <button type="button" data-urg="1">! Low</button>
-          <button type="button" data-urg="2">!! Medium</button>
-          <button type="button" data-urg="3">!!! High</button>
-        </div>
-      </div>
-
-      <div class="field">
         <label>Date</label>
         <div class="pickwrap">
           <button type="button" id="dateBtn"></button>
@@ -297,6 +307,16 @@
       </div>
 
       <div class="field">
+        <label>Urgency</label>
+        <div class="seg" id="addUrgency">
+          <button type="button" data-urg="0" class="on">None</button>
+          <button type="button" data-urg="1">! Low</button>
+          <button type="button" data-urg="2">!! Medium</button>
+          <button type="button" data-urg="3">!!! High</button>
+        </div>
+      </div>
+
+      <div class="field">
         <label>Repeat</label>
         <div class="seg" id="addMode">
           <button type="button" data-mode="once" class="on">One-time</button>
@@ -305,7 +325,7 @@
         <div class="hint" id="addHint">One-time task on the chosen date.</div>
       </div>
 
-      <div><button class="primary" id="addBtn">Add task</button></div>
+      <div class="wide"><button class="primary" id="addBtn">Add task</button></div>
     </div>
   </section>
 
@@ -420,18 +440,38 @@
     }
     return t.date === ds;
   }
-  function isDone(t, ds){
-    return t.repeat === "weekly" ? !!(t.done && t.done[ds]) : !!t.done;
+  // status: 0 = not started, 1 = in progress, 2 = done
+  function statusOf(t, ds){
+    var v = (t.repeat === "weekly") ? (t.done && t.done[ds]) : t.done;
+    if(v === true) return 2;            // data written before statuses existed
+    return +v || 0;
   }
+  function isDone(t, ds){ return statusOf(t, ds) === 2; }
   function touch(o){ o.updated = Date.now(); return o; }
   function liveTasks(){ return state.tasks.filter(function(t){ return !t.deleted; }); }
   function liveProjects(){ return state.projects.filter(function(p){ return !p.deleted; }); }
-  function setDone(t, ds, v){
+  function setStatus(t, ds, v){
     touch(t);
     if(t.repeat === "weekly"){
-      t.done = t.done || {};
-      if(v) t.done[ds] = true; else delete t.done[ds];
-    } else { t.done = !!v; }
+      t.done = (t.done && typeof t.done === "object") ? t.done : {};
+      if(v) t.done[ds] = v; else delete t.done[ds];
+    } else { t.done = v; }
+  }
+  function cycleStatus(t, ds){ setStatus(t, ds, (statusOf(t, ds) + 1) % 3); }
+  var STATUS_MARK = ["", "~", "✓"];
+  var STATUS_NAME = ["Not started", "In progress", "Done"];
+  function statusBtn(t, ds){
+    var st = statusOf(t, ds);
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "st s" + st;
+    b.textContent = STATUS_MARK[st];
+    b.title = STATUS_NAME[st] + " — click to change";
+    b.setAttribute("aria-label", STATUS_NAME[st]);
+    b.addEventListener("click", function(e){
+      e.stopPropagation();
+      cycleStatus(t, ds); save(); render();
+    });
+    return b;
   }
   function tasksOn(ds){
     return liveTasks().filter(function(t){ return occursOn(t, ds); }).sort(byTime);
@@ -519,7 +559,7 @@
 
   var HOURS = [], MINS = [];
   for(var h=0;h<24;h++) HOURS.push(String(h).padStart(2,"0"));
-  for(var mi=0;mi<60;mi+=5) MINS.push(String(mi).padStart(2,"0"));
+  for(var mi=0;mi<60;mi++) MINS.push(String(mi).padStart(2,"0"));
 
   function paintTimeBtn(){
     timeBtn.textContent = (selHour && selMin) ? selHour + ":" + selMin : "No time";
@@ -675,10 +715,9 @@
     var done = isDone(t, ds);
     var el = document.createElement("div");
     el.className = "task" + (done ? " done" : "");
+    el.dataset.id = t.id;
 
-    var cb = document.createElement("input");
-    cb.type = "checkbox"; cb.checked = done;
-    cb.addEventListener("change", function(){ setDone(t, ds, cb.checked); save(); render(); });
+    var cb = statusBtn(t, ds);
 
     var body = document.createElement("div"); body.className = "body";
     var title = document.createElement("div"); title.className = "title"; title.textContent = t.title;
@@ -693,6 +732,13 @@
     del.className = "x"; del.title = "Delete"; del.textContent = "×";
     del.addEventListener("click", function(){ removeTask(t); });
 
+    if(opts.drag){
+      el.draggable = true;
+      el.classList.add("draggable");
+      var grip = document.createElement("span");
+      grip.className = "grip"; grip.textContent = "≡"; grip.title = "Drag to reorder";
+      el.appendChild(grip);
+    }
     if(t.project){
       var stripe = document.createElement("div");
       stripe.className = "stripe"; stripe.style.background = projColor(t.project);
@@ -773,15 +819,22 @@
           var done = isDone(t, ds);
           var m = document.createElement("div");
           m.className = "mini" + (done ? " done" : "");
-          var cb = document.createElement("input");
-          cb.type = "checkbox"; cb.checked = done;
-          cb.addEventListener("change", (function(task,dstr,box){
-            return function(){ setDone(task,dstr,box.checked); save(); render(); };
-          })(t, ds, cb));
+          var cb = statusBtn(t, ds);
           var txt = document.createElement("div"); txt.className = "t";
+
+          // line 1: urgency + time, line 2: the task, line 3: its project
           var u = urgEl(t.urgency);
-          if(u){ u.style.paddingTop = "0"; u.style.marginRight = "4px"; txt.appendChild(u); }
-          txt.appendChild(document.createTextNode((t.time ? t.time + " " : "") + t.title));
+          if(u || t.time){
+            var l1 = document.createElement("div"); l1.className = "line1";
+            if(u){ u.style.paddingTop = "0"; l1.appendChild(u); }
+            if(t.time){
+              var tm = document.createElement("span"); tm.className = "tm"; tm.textContent = t.time;
+              l1.appendChild(tm);
+            }
+            txt.appendChild(l1);
+          }
+          var ttl = document.createElement("span"); ttl.className = "ttl"; ttl.textContent = t.title;
+          txt.appendChild(ttl);
           if(t.project){
             var p = document.createElement("span"); p.className = "p";
             p.textContent = t.project; p.style.color = projColor(t.project);
@@ -834,10 +887,11 @@
 
       var ph = document.createElement("div"); ph.className = "ph";
       var nm = document.createElement("div"); nm.className = "pn";
+      var dotEl = null;
       if(!g.loose){
-        var d = document.createElement("span");
-        d.className = "dot"; d.style.background = projColor(g.name); d.style.marginRight = "8px";
-        nm.appendChild(d);
+        dotEl = document.createElement("span");
+        dotEl.className = "dot big"; dotEl.style.background = projColor(g.name);
+        nm.appendChild(dotEl);
       }
       nm.appendChild(document.createTextNode(g.name));
       var ct = document.createElement("div"); ct.className = "count";
@@ -853,6 +907,10 @@
       if(!g.loose){
         var sw = document.createElement("div");
         sw.className = "swatches"; sw.style.margin = "0 0 10px";
+        sw.hidden = true;
+        dotEl.title = "Change colour";
+        dotEl.style.cursor = "pointer";
+        dotEl.addEventListener("click", function(){ sw.hidden = !sw.hidden; });
         PALETTE.forEach(function(c){
           var b = document.createElement("button");
           b.type = "button"; b.style.background = c; b.title = "Set colour " + c;
@@ -866,13 +924,15 @@
         el.appendChild(sw);
       }
 
-      g.tasks.slice().sort(function(a,b){
-        if(a.date !== b.date) return a.date < b.date ? -1 : 1;
-        return byTime(a,b);
-      }).forEach(function(t){
+      var holder = document.createElement("div");
+      holder.className = "droplist";
+      g.tasks.slice().sort(projOrder).forEach(function(t){
         var ds = t.repeat === "weekly" ? nextOccurrence(t, today) : t.date;
-        el.appendChild(taskRow(t, ds, {hideProject:true, showDate:true}));
+        var row = taskRow(t, ds, {hideProject:true, showDate:true, drag:true});
+        holder.appendChild(row);
       });
+      wireDrag(holder);
+      el.appendChild(holder);
 
       if(!g.loose){
         var del = document.createElement("button");
@@ -887,6 +947,48 @@
       }
       box.appendChild(el);
     });
+  }
+  function projOrder(a,b){
+    var ao = a.order, bo = b.order;
+    if(ao != null && bo != null && ao !== bo) return ao - bo;
+    if(ao != null && bo == null) return -1;
+    if(bo != null && ao == null) return 1;
+    if(a.date !== b.date) return a.date < b.date ? -1 : 1;
+    return byTime(a,b);
+  }
+  function wireDrag(holder){
+    var dragging = null;
+    holder.addEventListener("dragstart", function(e){
+      var row = e.target.closest(".task"); if(!row) return;
+      dragging = row; row.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      try{ e.dataTransfer.setData("text/plain", row.dataset.id); }catch(err){}
+    });
+    holder.addEventListener("dragend", function(){
+      if(dragging) dragging.classList.remove("dragging");
+      dragging = null;
+      commitOrder(holder);
+    });
+    holder.addEventListener("dragover", function(e){
+      if(!dragging) return;
+      e.preventDefault();
+      var after = null;
+      Array.prototype.forEach.call(holder.querySelectorAll(".task:not(.dragging)"), function(row){
+        var box = row.getBoundingClientRect();
+        if(e.clientY > box.top + box.height/2) after = row;
+      });
+      if(after === null) holder.insertBefore(dragging, holder.firstChild);
+      else after.parentNode.insertBefore(dragging, after.nextSibling);
+    });
+  }
+  function commitOrder(holder){
+    var ids = Array.prototype.map.call(holder.querySelectorAll(".task"), function(r){ return r.dataset.id; });
+    var changed = false;
+    ids.forEach(function(id, i){
+      var t = state.tasks.filter(function(x){ return x.id === id; })[0];
+      if(t && t.order !== i){ t.order = i; touch(t); changed = true; }
+    });
+    if(changed){ save(); render(); }
   }
   function nextOccurrence(t, fromYmd){
     var start = parseYmd(fromYmd) < parseYmd(t.date) ? parseYmd(t.date) : parseYmd(fromYmd);
