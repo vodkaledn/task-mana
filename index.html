@@ -177,6 +177,10 @@
   .proj .ph{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px}
   .proj .pn{font-weight:600; letter-spacing:.02em; display:flex; align-items:center}
   .proj.dragging{opacity:.5; border-style:dashed}
+  .proj.grabbable{cursor:grab}
+  .proj.grabbable:active{cursor:grabbing}
+  .proj .task,.proj .swatches,.proj button{cursor:auto}
+  .proj .task.draggable{cursor:grab}
   .pgrip{padding:0 8px 0 0; font-size:16px}
   .bar{height:3px; background:var(--panel-3); border-radius:2px; overflow:hidden; margin-bottom:10px}
   .bar i{display:block; height:100%; background:#fff}
@@ -912,10 +916,13 @@
       if(!g.loose){
         var pgrip = document.createElement("span");
         pgrip.className = "grip pgrip"; pgrip.textContent = "≡";
-        pgrip.title = "Drag to reorder this project";
-        pgrip.addEventListener("mousedown", function(){ el.draggable = true; });
-        pgrip.addEventListener("mouseup", function(){ el.draggable = false; });
+        pgrip.title = "Drag anywhere on this card to reorder it";
         nm.insertBefore(pgrip, nm.firstChild);
+        el.classList.add("grabbable");
+        // anywhere on the card starts a drag, except controls and the task rows
+        el.addEventListener("mousedown", function(e){
+          el.draggable = !e.target.closest(".task, button, input, select, a, .swatches, .dot");
+        });
       }
       ph.appendChild(nm); ph.appendChild(ct); el.appendChild(ph);
 

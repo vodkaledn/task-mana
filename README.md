@@ -6,7 +6,7 @@ A single-file task manager for people juggling many projects. No build step, no 
 
 - **Compact task form** — task + project, date + time, urgency + repeat, paired two to a row.
 - **Projects with colours** — assign each task to a project (or create one inline) and give the project a colour from an 8-swatch palette. The colour shows as a stripe and dot on every task, in the week calendar, and on the project's progress bar; click a project's dot to reveal the palette and recolour it.
-- **Drag to reorder** — drag tasks by the ≡ grip to reorder them inside a project, and drag a project card by the grip next to its name to reorder the projects themselves. Both orders are saved. "No project" always sits last.
+- **Drag to reorder** — drag tasks by the ≡ grip to reorder them inside a project, and drag a project card from anywhere on it — its name, its header, its empty space — to reorder the projects themselves. Both orders are saved. "No project" always sits last.
 - **Urgency symbols** — mark a task `!` low, `!!` medium or `!!!` high. The symbol appears on the task everywhere, colour-coded grey / amber / red, and more urgent tasks sort first within the same time slot.
 - **Any date** — a built-in Monday→Sunday month picker (no locale-dependent native popup).
 - **24-hour time** — one field that opens a two-column wheel: hours `00`–`23` on the left, minutes `00`–`59` on the right, both scrollable, with **No time** and **Done** below. Never AM/PM, whatever your browser's locale.
