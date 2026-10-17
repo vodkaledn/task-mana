@@ -234,7 +234,8 @@
   #etDelete:hover,#epDelete:hover{border-color:#ff5c5c; background:rgba(255,92,92,.1)}
   .task .body{cursor:pointer}
   .mini .t{cursor:pointer}
-  .proj .pn{cursor:pointer}
+  .proj .pname{cursor:pointer}
+  .proj .pname:hover{text-decoration:underline}
   .sheet p{margin:0 0 12px}
   .sheet .field{margin-bottom:12px}
   .sheet input,.sheet select{max-width:100%}
@@ -1233,11 +1234,7 @@
 
       var ph = document.createElement("div"); ph.className = "ph";
       var nm = document.createElement("div"); nm.className = "pn";
-      var dotEl = null;
       if(!g.loose){
-        dotEl = document.createElement("span");
-        dotEl.className = "dot big"; dotEl.style.background = projColor(g.name);
-        nm.appendChild(dotEl);
         var em = projEmoji(g.name);
         if(em){
           var emEl = document.createElement("span");
@@ -1246,6 +1243,7 @@
         }
       }
       var nameText = document.createElement("span");
+      nameText.className = "pname";
       nameText.textContent = g.name;
       if(!g.loose){
         nameText.title = "Click to edit this project";
@@ -1265,7 +1263,7 @@
         el.classList.add("grabbable");
         // anywhere on the card starts a drag, except controls and the task rows
         el.addEventListener("mousedown", function(e){
-          el.draggable = !e.target.closest(".task, button, input, select, a, .swatches, .dot");
+          el.draggable = !e.target.closest(".task, button, input, select, a, .pname");
         });
       }
       ph.appendChild(nm); ph.appendChild(ct);
@@ -1280,37 +1278,6 @@
       if(!g.loose) bar.firstChild.style.background = projColor(g.name);
       el.appendChild(bar);
 
-      if(!g.loose){
-        var sw = document.createElement("div");
-        sw.className = "swatches"; sw.style.margin = "0 0 10px";
-        sw.hidden = true;
-        var emRow = document.createElement("div");
-        emRow.className = "emojis"; emRow.style.margin = "0 0 10px";
-        emRow.hidden = true;
-        buildEmojiPicker(emRow,
-          (function(nm3){ return function(){ return projEmoji(nm3); }; })(g.name),
-          (function(nm3){ return function(v){
-            state.projects.forEach(function(p){ if(p.name === nm3){ p.emoji = v; touch(p); } });
-            save(); render();
-          }; })(g.name));
-        dotEl.title = "Change colour and emoji";
-        dotEl.style.cursor = "pointer";
-        dotEl.addEventListener("click", function(){
-          sw.hidden = !sw.hidden; emRow.hidden = sw.hidden;
-        });
-        el.appendChild(emRow);
-        PALETTE.forEach(function(c){
-          var b = document.createElement("button");
-          b.type = "button"; b.style.background = c; b.title = "Set colour " + c;
-          if(projColor(g.name) === c) b.className = "on";
-          b.addEventListener("click", (function(nm2,col){ return function(){
-            state.projects.forEach(function(p){ if(p.name === nm2){ p.color = col; touch(p); } });
-            save(); render();
-          };})(g.name, c));
-          sw.appendChild(b);
-        });
-        el.appendChild(sw);
-      }
 
       var holder = document.createElement("div");
       holder.className = "droplist";
