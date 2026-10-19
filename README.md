@@ -20,7 +20,7 @@ A single-file task manager for people juggling many projects. No build step, no 
 - **Timetable week view** — each day is a column with hour rows from 07:00 to midnight, faint lines marking morning (07–12), noon (12–18) and night (18–24). Tasks with a time sit at their hour; overlapping ones share the width. Tasks without a time wait in a **No time** strip beneath. Every week carries a bold **Week N** badge (ISO week number).
 - **Durations** — give a task an end time (after its start, same day) and it spans start to end in the timetable.
 - **Drag onto another day** — drag a task onto a different day to change its date and keep its time (a recurring task asks first, since it moves the whole series).
-- **Collapsing** — fold each project, and each week, with its ▾ button; **Collapse all / Expand all** for both. A folded week keeps its day headers. Folded state is remembered per device and is not synced.
+- **Collapsing** — fold a project or a week by clicking anywhere on its header row; **Collapse all / Expand all** for both. A folded week keeps its day headers. Folded state is remembered per device and is not synced.
 - **Black & white** interface throughout.
 - **Export / Import** JSON for backup or moving between browsers.
 - **Multi-device sync** through a secret GitHub Gist — see below.

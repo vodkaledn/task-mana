@@ -183,7 +183,9 @@
     padding:3px 14px; border-radius:999px; white-space:nowrap;
   }
   .weekrow .wkrange{font-size:12px; color:var(--muted); letter-spacing:.04em}
-  .twirl{padding:2px 8px; font-size:13px; line-height:1.2; color:var(--muted); flex:0 0 auto}
+  .clicky{cursor:pointer}
+  .weekrow.clicky:hover .twirl, .ph.clicky:hover .twirl{color:#fff}
+  .twirl{pointer-events:none; border-color:transparent; background:transparent;padding:2px 8px; font-size:13px; line-height:1.2; color:var(--muted); flex:0 0 auto}
   .twirl:hover{color:#fff}
   .day{background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px; min-height:0; min-width:0}
   .day.today{border-color:#fff}
@@ -1215,7 +1217,9 @@
       tw.type = "button"; tw.className = "twirl";
       tw.textContent = folded ? CHEV_SHUT : CHEV_OPEN;
       tw.title = folded ? "Show this week's timetable" : "Collapse this week";
-      tw.addEventListener("click", (function(k, f){ return function(){
+      head.classList.add("clicky");
+      head.title = folded ? "Click to show this week's timetable" : "Click to collapse this week";
+      head.addEventListener("click", (function(k, f){ return function(){
         ui.week[k] = !f; saveUi(); render();
       }; })(wkey, folded));
       var wk = document.createElement("span"); wk.className = "wk"; wk.textContent = "Week " + isoWeek(ws);
@@ -1502,8 +1506,10 @@
       tw.type = "button"; tw.className = "twirl";
       tw.textContent = shut ? CHEV_SHUT : CHEV_OPEN;
       tw.title = shut ? "Show tasks" : "Collapse";
-      tw.addEventListener("click", function(e){
-        e.stopPropagation();
+      // the whole header row folds the card, except the name (edit) and the delete button
+      ph.classList.add("clicky");
+      ph.addEventListener("click", function(e){
+        if(e.target.closest(".pname, .x")) return;
         if(shut) delete ui.proj[pkey]; else ui.proj[pkey] = 1;
         saveUi(); render();
       });
