@@ -17,6 +17,10 @@ A single-file task manager for people juggling many projects. No build step, no 
 - **Three-state tasks** — the box beside each task cycles on click: pale red (not started) → amber `~` (in progress) → green `✓` (done).
 - **Edit by clicking** — click a task (in Today, Tomorrow, the calendar or a project) to open a dialog for its title, project, status, date, time, urgency and repeat, with Delete there too. Click a project's name to rename it, recolour it, change its emoji, or delete it and its tasks. Renaming a project moves all of its tasks with it. Escape closes either dialog.
 - **Week calendar** — Monday to Sunday (weekend at the end), each day listing its tasks with a done/total counter. Each entry puts its urgency and time on one line and the task itself on the next, so narrow days stay readable. Toggle **1 / 2 / 4 weeks** and page back and forth.
+- **Timetable week view** — each day is a column with hour rows from 07:00 to midnight, faint lines marking morning (07–12), noon (12–18) and night (18–24). Tasks with a time sit at their hour; overlapping ones share the width. Tasks without a time wait in a **No time** strip beneath. Every week carries a bold **Week N** badge (ISO week number).
+- **Durations** — give a task an end time (after its start, same day) and it spans start to end in the timetable.
+- **Drag onto another day** — drag a task onto a different day to change its date and keep its time (a recurring task asks first, since it moves the whole series).
+- **Collapsing** — fold each project, and each week, with its ▾ button; **Collapse all / Expand all** for both. A folded week keeps its day headers. Folded state is remembered per device and is not synced.
 - **Black & white** interface throughout.
 - **Export / Import** JSON for backup or moving between browsers.
 - **Multi-device sync** through a secret GitHub Gist — see below.
