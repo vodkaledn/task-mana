@@ -4,7 +4,7 @@ A single-file task manager for people juggling many projects. No build step, no 
 
 ## Features
 
-- **Compact task form** — task + project, date + time, urgency + repeat, paired two to a row.
+- **Add-task popup** — press **+ Add task** above the week view, or hover any day and press the **+** in its corner (that day is pre-filled). Task + project, date + time (start → end), urgency + repeat, paired two to a row.
 - **Projects with colours** — assign each task to a project (or create one inline) and give the project a colour from an 8-swatch palette. The colour shows as a stripe on every task, in the week calendar, and on the project's progress bar; change it in the project's edit dialog.
 - **Project emoji** — every emoji in Unicode 15.1 (1,898 of them, flags and people included), searchable by name: type `rocket`, `chart`, `vietnam`, `party popper`. Recently used ones come back first. The emoji replaces the colour dot on task tags and leads the project name in the calendar and the Projects list.
 - **Drag to reorder a day** — drag tasks in Today, in Tomorrow, or straight inside a calendar day cell. A day has one running order, so moving a task in Today moves it in the calendar too, and vice versa.

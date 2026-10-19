@@ -191,6 +191,13 @@
   .day.today{border-color:#fff}
   .day.dropok{border-color:#ffb020; background:var(--panel-3)}
   .day .dh{display:flex; justify-content:space-between; align-items:baseline; height:40px; margin-bottom:6px}
+  .day .dh .count{margin-left:6px; min-width:22px; text-align:right}
+  .dadd{
+    margin-left:auto; padding:0; width:22px; height:22px; line-height:1; font-size:16px; border-radius:6px;
+    opacity:0; transition:opacity .12s; align-self:flex-start;
+  }
+  .day:hover .dadd, .dadd:focus{opacity:1}
+  @media (hover:none){ .dadd{opacity:1} }
   .axis{position:relative; padding-top:55px; font-size:10px; color:var(--dim)}
   .axis .zonelabels{position:relative}
   .axis .hr{position:absolute; right:2px; transform:translateY(-50%); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -432,11 +439,10 @@
   </div>
 </div>
 
-<main>
-  <!-- ADD -->
-  <section>
-    <h2>Add a task</h2>
-    <div class="form">
+<div class="modal hidden" id="addModal">
+  <div class="sheet">
+    <h2>Add task</h2>
+    <div class="form editform">
       <div class="field">
         <label for="addTitle">Task</label>
         <input type="text" id="addTitle" placeholder="e.g. Send Q4 brief to agency">
@@ -479,10 +485,15 @@
         <div class="hint" id="addHint">One-time task on the chosen date.</div>
       </div>
 
-      <div class="wide"><button class="primary" id="addBtn">Add task</button></div>
     </div>
-  </section>
+    <div class="wheelfoot">
+      <button type="button" id="addCancel">Cancel</button>
+      <button type="button" id="addBtn" class="primary">Add task</button>
+    </div>
+  </div>
+</div>
 
+<main>
   <!-- TODAY / TOMORROW -->
   <section>
     <div class="weekhead">
@@ -506,6 +517,7 @@
     <div class="weekhead">
       <h2 style="margin:0">Week view</h2>
       <div class="row">
+        <button id="addOpen" class="primary">+ Add task</button>
         <button id="weekCollapse">Collapse all</button>
         <div class="seg" id="weekCount">
           <button type="button" data-weeks="1" class="on">1 week</button>
@@ -1056,14 +1068,27 @@
     }));
     save();
     $("addTitle").value = "";
-    formEnd.set("");
+    formEnd.set(""); formTime.set("");
     newProject.value = "";
     fillProjects();
     addProject.value = proj || "";
     toggleNew();
-    $("addTitle").focus();
+    closeAdd();
     render();
   }
+  function openAdd(ds){
+    formDate.set(ds || todayYmd());
+    refreshHint();
+    $("addModal").classList.remove("hidden");
+    $("addTitle").focus();
+  }
+  function closeAdd(){
+    closeAllPops();
+    $("addModal").classList.add("hidden");
+  }
+  $("addOpen").addEventListener("click", function(){ openAdd(); });
+  $("addCancel").addEventListener("click", closeAdd);
+  $("addModal").addEventListener("click", function(e){ if(e.target === $("addModal")) closeAdd(); });
   $("addBtn").addEventListener("click", addTask);
   $("addTitle").addEventListener("keydown", function(e){ if(e.key === "Enter") addTask(); });
   newProject.addEventListener("keydown", function(e){ if(e.key === "Enter") addTask(); });
@@ -1262,8 +1287,9 @@
     cell.dataset.ds = ds;
     var dh = document.createElement("div"); dh.className = "dh";
     dh.innerHTML = '<div><div class="dow">' + DOW_MON[monIndex(d)] + '</div><div class="dnum">' +
-                   d.getDate() + '</div></div><div class="count">' +
-                   (list.length ? open + "/" + list.length : "") + '</div>';
+                   d.getDate() + '</div></div><button type="button" class="dadd" title="Add a task on this day">+</button>' +
+                   '<div class="count">' + (list.length ? open + "/" + list.length : "") + '</div>';
+    dh.querySelector(".dadd").addEventListener("click", function(e){ e.stopPropagation(); openAdd(ds); });
     cell.appendChild(dh);
 
     if(!folded){
@@ -1880,6 +1906,7 @@
 
   document.addEventListener("keydown", function(e){
     if(e.key !== "Escape") return;
+    if(!$("addModal").classList.contains("hidden")) closeAdd();
     if(!$("taskModal").classList.contains("hidden")) closeTaskEditor();
     if(!$("projModal").classList.contains("hidden")) closeProjectEditor();
   });
